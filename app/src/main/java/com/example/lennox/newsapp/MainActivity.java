@@ -1,6 +1,7 @@
 package com.example.lennox.newsapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,8 +16,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String NEWS_URL = "";
+    private static final String NEWS_URL = "https://content.guardianapis.com/search?";
     private static NewsAdapter newsAdapter;
+    private static String orderBy = "newest";
+    private static String section = "sports";
+    private static String useDate = "published";
+    private static String showElements = "image";
+    private static String author = "author";
+    private static final String API_KEY = "test";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +62,17 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
 
-            return QueryUtils.fetchEarthquakeData(urls[0]);
+            //Create the query parameters
+            Uri baseUri = Uri.parse(NEWS_URL);
+            Uri.Builder uriBuilder = baseUri.buildUpon();
+
+            uriBuilder.appendQueryParameter("show-elements", showElements);
+            uriBuilder.appendQueryParameter("use-date", useDate);
+            uriBuilder.appendQueryParameter("section", section);
+            uriBuilder.appendQueryParameter("order-by", orderBy);
+            uriBuilder.appendQueryParameter("author", author);
+            uriBuilder.appendQueryParameter("api-key", API_KEY);
+            return QueryUtils.fetchEarthquakeData(uriBuilder.toString());
         }
 
         @Override
