@@ -1,10 +1,16 @@
 package com.example.lennox.newsapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,6 +24,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String LOG = MainActivity.class.getSimpleName();
     private static final String NEWS_URL = "https://content.guardianapis.com/search?";
     private static NewsAdapter newsAdapter;
     private static String orderBy = "newest";
@@ -26,6 +33,27 @@ public class MainActivity extends AppCompatActivity {
     private static String showElements = "image";
  /*   private static String author = "author"; */
     private static final String API_KEY = "test";
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.setting:
+                //to do
+                break;
+            case R.id.refresh:
+                //to do
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +66,6 @@ public class MainActivity extends AppCompatActivity {
         //Create the adapter
         newsAdapter = new NewsAdapter(this, new ArrayList<News>());
 
-        //AsyncTask to retrieve data from a background thread
-        new NewsAsyncTask().execute(NEWS_URL);
-
-        newsView.setAdapter(newsAdapter);
         newsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -52,8 +76,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //If there is no network
-        newsView.setEmptyView(emptyState);
+        ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+
+        if(netInfo != null  && netInfo.isConnected()){
+            //AsyncTask to retrieve data from a background thread
+            new NewsAsyncTask().execute(NEWS_URL);
+        }else{
+            //If there is no network
+            View loading = findViewById(R.id.loading);
+            loading.setVisibility(View.GONE);
+            newsView.setEmptyView(emptyState);
+        }
+        newsView.setAdapter(newsAdapter);
     }
 
     private static class NewsAsyncTask extends AsyncTask<String,Void, List<News>>{
@@ -68,12 +103,15 @@ public class MainActivity extends AppCompatActivity {
             Uri baseUri = Uri.parse(NEWS_URL);
             Uri.Builder uriBuilder = baseUri.buildUpon();
 
-            uriBuilder.appendQueryParameter("show-elements", showElements);
             uriBuilder.appendQueryParameter("use-date", useDate);
+            /*
+            uriBuilder.appendQueryParameter("show-elements", showElements);
+
             uriBuilder.appendQueryParameter("section", section);
             uriBuilder.appendQueryParameter("order-by", orderBy);
             /*uriBuilder.appendQueryParameter("author", author); */
             uriBuilder.appendQueryParameter("api-key", API_KEY);
+            Log.d(LOG, "The query has been built");
             return QueryUtils.fetchEarthquakeData(uriBuilder.toString());
         }
 

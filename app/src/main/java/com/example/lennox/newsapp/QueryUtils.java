@@ -30,9 +30,11 @@ public class QueryUtils {
         //Create a HTTP connection
         try {
             jsonResponse = makeHttpRequest(newsURL);
+            Log.d(LOG, "Data is ready to be read");
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         //Parse the data from JSON FORMAT To string
         return extractFeatureFromJson(jsonResponse);
     }
@@ -63,10 +65,12 @@ public class QueryUtils {
 
                 News news = new News(article,section,datePublished,webURL);
                 newsList.add(news);
+                Log.d(LOG, "JSON extracted");
             }//end for
         } catch (JSONException e) {
             Log.e(LOG, "Error parsing json objects", e);
         }
+
         return newsList;
     }
 
@@ -87,8 +91,9 @@ public class QueryUtils {
             urlConnection.connect();
             inputStream = urlConnection.getInputStream();
             jsonResponse = readFromStream(inputStream);
+            Log.d(LOG, "Connected successfully");
         }catch (Exception e){
-            Log.e(LOG+ ": No connection","Error occurred "+ e);
+            Log.e(LOG+ ": No connection","Api could not be connected "+ e);
         }finally {
             if(urlConnection != null){
                 urlConnection.disconnect();
@@ -122,7 +127,9 @@ public class QueryUtils {
     private static URL createURL(String url) {
         try {
             return new URL(url);
+
         } catch (MalformedURLException e) {
+            Log.e(LOG, "URL formed badly");
             return null;
         }
     }
