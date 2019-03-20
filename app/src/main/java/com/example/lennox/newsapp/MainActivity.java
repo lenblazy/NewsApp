@@ -6,7 +6,9 @@ import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private static String section = "sports";
     private static String useDate = "published";
     private static String showElements = "image";
-    private static String author = "author";
+ /*   private static String author = "author"; */
     private static final String API_KEY = "test";
 
     @Override
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView emptyState = findViewById(R.id.empty_view);
+        LinearLayout emptyState = findViewById(R.id.empty_view);
         ListView newsView = findViewById(R.id.news_list);
 
         //Create the adapter
@@ -40,13 +42,13 @@ public class MainActivity extends AppCompatActivity {
         new NewsAsyncTask().execute(NEWS_URL);
 
         newsView.setAdapter(newsAdapter);
-        newsView.setOnClickListener(new View.OnClickListener() {
+        newsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 //Get current position of news item
-                //News currentNews = newsAdapter.getItem();
-                //Uri newsUri = Uri.parse(currentNews.getUrl());
-                //startActivity(new Intent(Intent.ACTION_VIEW, newsUri));
+                News currentNews = newsAdapter.getItem(position);
+                Uri newsUri = Uri.parse(currentNews.getNewsURL());
+                startActivity(new Intent(Intent.ACTION_VIEW, newsUri));
             }
         });
 
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             uriBuilder.appendQueryParameter("use-date", useDate);
             uriBuilder.appendQueryParameter("section", section);
             uriBuilder.appendQueryParameter("order-by", orderBy);
-            uriBuilder.appendQueryParameter("author", author);
+            /*uriBuilder.appendQueryParameter("author", author); */
             uriBuilder.appendQueryParameter("api-key", API_KEY);
             return QueryUtils.fetchEarthquakeData(uriBuilder.toString());
         }

@@ -2,7 +2,6 @@ package com.example.lennox.newsapp;
 
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.LinearLayout;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,7 +33,6 @@ public class QueryUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         //Parse the data from JSON FORMAT To string
         return extractFeatureFromJson(jsonResponse);
     }
@@ -90,7 +88,7 @@ public class QueryUtils {
             inputStream = urlConnection.getInputStream();
             jsonResponse = readFromStream(inputStream);
         }catch (Exception e){
-            Log.e("No connection","Error occurred "+ e);
+            Log.e(LOG+ ": No connection","Error occurred "+ e);
         }finally {
             if(urlConnection != null){
                 urlConnection.disconnect();
