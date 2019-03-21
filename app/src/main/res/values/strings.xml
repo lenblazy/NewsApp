@@ -2,4 +2,5 @@
     <string name="app_name">NewsApp</string>
     <string name="post_date">2019-03-12T</string>
     <string name="post_time">05:54:04Z</string>
+    <string name="author">Author: </string>
 </resources>

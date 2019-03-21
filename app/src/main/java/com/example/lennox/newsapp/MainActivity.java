@@ -28,11 +28,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String NEWS_URL = "https://content.guardianapis.com/search?";
     private static NewsAdapter newsAdapter;
     private static String orderBy = "newest";
-    private static String section = "sports";
+    private static String section = "politics";
     private static String useDate = "published";
-    private static String showElements = "image";
- /*   private static String author = "author"; */
-    private static final String API_KEY = "test";
+    private static String showTags = "contributor";
+    private static final String API_KEY = "1aefe6a9-8256-4ed1-9705-078617ffba7b";
+    private static View loading;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,8 +60,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LinearLayout emptyState = findViewById(R.id.empty_view);
+        TextView emptyState = findViewById(R.id.empty_view);
         ListView newsView = findViewById(R.id.news_list);
+        loading = findViewById(R.id.loading);
+        newsView.setEmptyView(emptyState);
 
         //Create the adapter
         newsAdapter = new NewsAdapter(this, new ArrayList<News>());
@@ -84,9 +86,8 @@ public class MainActivity extends AppCompatActivity {
             new NewsAsyncTask().execute(NEWS_URL);
         }else{
             //If there is no network
-            View loading = findViewById(R.id.loading);
             loading.setVisibility(View.GONE);
-            newsView.setEmptyView(emptyState);
+            emptyState.setText("No internet connection!!!");
         }
         newsView.setAdapter(newsAdapter);
     }
@@ -104,12 +105,9 @@ public class MainActivity extends AppCompatActivity {
             Uri.Builder uriBuilder = baseUri.buildUpon();
 
             uriBuilder.appendQueryParameter("use-date", useDate);
-            /*
-            uriBuilder.appendQueryParameter("show-elements", showElements);
-
-            uriBuilder.appendQueryParameter("section", section);
             uriBuilder.appendQueryParameter("order-by", orderBy);
-            /*uriBuilder.appendQueryParameter("author", author); */
+            uriBuilder.appendQueryParameter("section", section);
+            uriBuilder.appendQueryParameter("show-tags", showTags);
             uriBuilder.appendQueryParameter("api-key", API_KEY);
             Log.d(LOG, "The query has been built");
             return QueryUtils.fetchEarthquakeData(uriBuilder.toString());
@@ -118,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<News> news) {
             if (news != null && !news.isEmpty()) {
+                loading.setVisibility(View.GONE);
                 newsAdapter.addAll(news);
             }
         }

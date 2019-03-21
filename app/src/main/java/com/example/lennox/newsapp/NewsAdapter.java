@@ -1,6 +1,9 @@
 package com.example.lennox.newsapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,23 +16,32 @@ import org.w3c.dom.Text;
 import java.util.ArrayList;
 
 public class NewsAdapter extends ArrayAdapter<News> {
-    public NewsAdapter(Context context, ArrayList<News> newsList) {
+    public NewsAdapter(Activity context, ArrayList<News> newsList) {
         super(context,0, newsList);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        View listItemView = convertView;
+    public View getView(int position, View view, ViewGroup parent) {
+        View listItemView = view;
         if(listItemView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_list, parent, false);
+            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.item_list, parent, false);
         }
+
         News currentNews = getItem(position);
 
-        TextView newsHeadline = (TextView) listItemView.findViewById(R.id.news_headline);
+        TextView newsHeadline = listItemView.findViewById(R.id.news_headline);
         newsHeadline.setText(currentNews.getArticleName());
 
         TextView newsSection = (TextView) listItemView.findViewById(R.id.news_section);
-        newsSection.setText(currentNews.getSectionName().substring(1));
+        newsSection.setText(currentNews.getSectionName());
+
+        GradientDrawable sectionCircle = (GradientDrawable) newsSection.getBackground();
+
+        // Get the appropriate background color based on the current earthquake magnitude
+        int sectionColor = getSectionColor(currentNews.getSectionName());
+
+        // Set the color on the magnitude circle
+        sectionCircle.setColor(sectionColor);
 
         TextView datePublished = (TextView) listItemView.findViewById(R.id.date);
         TextView timePublished = (TextView) listItemView.findViewById(R.id.time);
@@ -40,10 +52,36 @@ public class NewsAdapter extends ArrayAdapter<News> {
 
         TextView author = (TextView) listItemView.findViewById(R.id.author);
         //to change this later after being able to extract author
-        author.setText("Author: " + "Unknown");
+        author.setText(R.string.author + currentNews.getAuthor());
 
         return listItemView;
     }
+
+    private int getSectionColor(String sectionName) {
+        int sectionColorResourceId;
+        switch(sectionName){
+            case "sports":
+                sectionColorResourceId = R.color.sports;
+                break;
+            case "finance":
+                sectionColorResourceId = R.color.finance;
+                break;
+            case "politics":
+                sectionColorResourceId = R.color.politics;
+                break;
+            case "technology":
+                sectionColorResourceId = R.color.technology;
+                break;
+            case "health":
+                sectionColorResourceId = R.color.health;
+                break;
+            default:
+                sectionColorResourceId = R.color.unknown;
+                break;
+        }
+        return ContextCompat.getColor(getContext(), sectionColorResourceId);
+    }
+
 
     private String formatTime(String datePublished, String category) {
         String separator = "T";

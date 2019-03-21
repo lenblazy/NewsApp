@@ -34,7 +34,6 @@ public class QueryUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         //Parse the data from JSON FORMAT To string
         return extractFeatureFromJson(jsonResponse);
     }
@@ -48,13 +47,10 @@ public class QueryUtils {
         List<News> newsList = new ArrayList<>();
 
         try {
-
             JSONObject root = new JSONObject(jsonResponse);
             JSONObject response = root.getJSONObject("response");
             JSONArray results = response.getJSONArray("results");
             for (int i = 0; i < results.length(); i++){
-                //get the author
-                //1st will be just passing null
                 JSONObject currentNews = results.getJSONObject(i);
 
                 //extract the data values
@@ -62,15 +58,18 @@ public class QueryUtils {
                 String section = currentNews.getString("sectionName");
                 String datePublished = currentNews.getString("webPublicationDate");
                 String webURL = currentNews.getString("webUrl");
-
-                News news = new News(article,section,datePublished,webURL);
-                newsList.add(news);
+                JSONArray tags = currentNews.getJSONArray("tags");
+                for(int j = 0; j< tags.length(); j++){
+                    JSONObject firstAuthor = tags.getJSONObject(j);
+                    String contributor = firstAuthor.getString("webTitle");
+                    News news = new News(article,section,datePublished, contributor,webURL);
+                    newsList.add(news);
+                }//end inner for
                 Log.d(LOG, "JSON extracted");
-            }//end for
+            }//end outer for
         } catch (JSONException e) {
             Log.e(LOG, "Error parsing json objects", e);
         }
-
         return newsList;
     }
 

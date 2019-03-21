@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tool="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
     <ProgressBar
@@ -17,28 +18,14 @@
         android:layout_height="match_parent"
         />
 
-    <LinearLayout
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
-
         <TextView
+            android:layout_centerInParent="true"
+            android:id="@+id/empty_view"
             android:layout_gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No news yet!!!"
-            android:textSize="30sp"
+            tools:text="No internet connection!!!"
+            android:textSize="20sp"
             />
-
-        <TextView
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Try refreshing your page"
-            />
-
-    </LinearLayout>
 
 </RelativeLayout>
