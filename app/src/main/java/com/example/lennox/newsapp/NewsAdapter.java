@@ -52,7 +52,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
 
         TextView author = (TextView) listItemView.findViewById(R.id.author);
         //to change this later after being able to extract author
-        author.setText(R.string.author + currentNews.getAuthor());
+        author.setText("Author: " + currentNews.getAuthor());
 
         return listItemView;
     }
@@ -60,20 +60,36 @@ public class NewsAdapter extends ArrayAdapter<News> {
     private int getSectionColor(String sectionName) {
         int sectionColorResourceId;
         switch(sectionName){
-            case "sports":
-                sectionColorResourceId = R.color.sports;
+            case "Football":
+            case "Sports":
+                sectionColorResourceId = R.color.football;
                 break;
-            case "finance":
-                sectionColorResourceId = R.color.finance;
+            case "Business":
+                sectionColorResourceId = R.color.business;
                 break;
-            case "politics":
+            case "Politics":
                 sectionColorResourceId = R.color.politics;
                 break;
-            case "technology":
-                sectionColorResourceId = R.color.technology;
+            case "World news":
+                sectionColorResourceId = R.color.worldNews;
                 break;
-            case "health":
-                sectionColorResourceId = R.color.health;
+            case "US news":
+            case "UK news":
+                sectionColorResourceId = R.color.usnews;
+                break;
+            case "Opinion":
+                sectionColorResourceId = R.color.opinion;
+                break;
+            case "Education":
+            case "Books":
+                sectionColorResourceId = R.color.education;
+                break;
+            case "Television":
+            case "Film":
+                sectionColorResourceId = R.color.books;
+                break;
+            case "Society":
+                sectionColorResourceId = R.color.society;
                 break;
             default:
                 sectionColorResourceId = R.color.unknown;
@@ -88,7 +104,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
         String date = "";
         if(datePublished.contains(separator)){
             String[] parts = datePublished.split(separator);
-            if(category == "date"){
+            if(category.equals("date")){
                 date += parts[0];
             }else{
                 date += parts[1];

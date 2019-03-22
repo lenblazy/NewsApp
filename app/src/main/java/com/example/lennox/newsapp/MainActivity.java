@@ -28,11 +28,14 @@ public class MainActivity extends AppCompatActivity {
     private static final String NEWS_URL = "https://content.guardianapis.com/search?";
     private static NewsAdapter newsAdapter;
     private static String orderBy = "newest";
-    private static String section = "politics";
+    private static String section = "";
     private static String useDate = "published";
     private static String showTags = "contributor";
     private static final String API_KEY = "1aefe6a9-8256-4ed1-9705-078617ffba7b";
     private static View loading;
+
+    //https://content.guardianapis.com/search?
+    // section=artanddesign&format=json&order-by=newest&page-size=20&show-tags=contributor&api-key=test
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -106,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
             uriBuilder.appendQueryParameter("use-date", useDate);
             uriBuilder.appendQueryParameter("order-by", orderBy);
-            uriBuilder.appendQueryParameter("section", section);
+           // uriBuilder.appendQueryParameter("section", section);
             uriBuilder.appendQueryParameter("show-tags", showTags);
             uriBuilder.appendQueryParameter("api-key", API_KEY);
             Log.d(LOG, "The query has been built");

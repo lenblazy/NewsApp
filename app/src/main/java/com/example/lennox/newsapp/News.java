@@ -16,7 +16,7 @@ public class News {
     }
 
     public String getAuthor() {
-        return articleName;
+        return author;
     }
 
     public String getArticleName() {

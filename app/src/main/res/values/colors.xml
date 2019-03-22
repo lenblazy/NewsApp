@@ -3,10 +3,17 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- news categories -->
     <color name="unknown">#FF6C696A</color>
-    <color name="sports">#242428</color>
-    <color name="finance">#290bae</color>
+    <color name="football">#242428</color>
+    <color name="business">#290bae</color>
     <color name="politics">#ab1d13</color>
-    <color name="technology">#b6bc0a</color>
-    <color name="health">#17af06</color>
+    <color name="worldNews">#b6bc0a</color>
+    <color name="opinion">#17af06</color>
+    <color name="usnews">#e24c0c</color>
+    <color name="education">#05678b</color>
+    <color name="books">#8a06af</color>
+    <color name="society">#c9c69e</color>
+
 </resources>
