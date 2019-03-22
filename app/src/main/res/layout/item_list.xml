@@ -63,8 +63,9 @@
 
     <TextView
         android:id="@+id/author"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textAlignment="textEnd"
         android:layout_marginStart="40dp"
         android:layout_toEndOf="@id/trends_follower"
         android:layout_alignParentBottom="true"

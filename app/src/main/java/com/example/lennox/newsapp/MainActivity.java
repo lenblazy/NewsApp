@@ -9,6 +9,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     private static String showTags = "contributor";
     private static final String API_KEY = "1aefe6a9-8256-4ed1-9705-078617ffba7b";
     private static View loading;
+    MyParceable myClass;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,6 +58,53 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         }
         return super.onOptionsItemSelected(item);
     }
+
+    //Used to prevent calling onCreate() after screen rotation
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("obj", myClass);
+    }
+
+    //Used to prevent calling onCreate() after screen rotation
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        myClass = savedInstanceState.getParcelable("obj");
+    }
+
+    public static class MyParceable implements Parcelable{
+        private int mData;
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        // save object in parcel
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeInt(mData);
+        }
+
+        public static final Parcelable.Creator<MyParceable> CREATOR =
+                new Parcelable.Creator<MyParceable>(){
+                    @Override
+                    public MyParceable createFromParcel(Parcel in) {
+                        return new MyParceable(in);
+                    }
+
+                    @Override
+                    public MyParceable[] newArray(int size) {
+                        return new MyParceable[size];
+                    }
+                };
+        // recreate object from parcel
+        private MyParceable(Parcel in){
+            mData = in.readInt();
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
