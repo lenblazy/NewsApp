@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     private static final String API_KEY = "1aefe6a9-8256-4ed1-9705-078617ffba7b";
     private static View loading;
     MyParceable myClass;
+    TextView emptyState;
+    ListView newsView;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,15 +50,34 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.setting:
-                //to do
+                startActivity(new Intent(MainActivity.this, Settings.class));
                 break;
             case R.id.refresh:
-                //to do
+                refresh();
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //reset the adapter and add new data
+    private void refresh() {
+        //clear existing data
+        newsAdapter.clear();
+        loading.setVisibility(View.VISIBLE);
+        ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
+        if(netInfo != null  && netInfo.isConnected()){
+            //refresh the loader to retrieve data
+            LoaderManager loaderManager = getLoaderManager();
+            loaderManager.initLoader(1, null, this);
+        }else{
+            //If there is no network
+            loading.setVisibility(View.GONE);
+            newsView.setEmptyView(emptyState);
+        }
+        newsView.setAdapter(newsAdapter);
     }
 
     //Used to prevent calling onCreate() after screen rotation
@@ -105,14 +126,13 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         }
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView emptyState = findViewById(R.id.empty_view);
-        ListView newsView = findViewById(R.id.news_list);
+        emptyState = findViewById(R.id.empty_view);
+        newsView = findViewById(R.id.news_list);
         loading = findViewById(R.id.loading);
         newsView.setEmptyView(emptyState);
 
