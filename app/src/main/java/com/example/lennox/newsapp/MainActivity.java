@@ -1,7 +1,10 @@
 package com.example.lennox.newsapp;
 
+import android.app.LoaderManager;
+import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -13,8 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +23,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderCallbacks<List<News>> {
 
     private static final String LOG = MainActivity.class.getSimpleName();
     private static final String NEWS_URL = "https://content.guardianapis.com/search?";
@@ -33,9 +34,6 @@ public class MainActivity extends AppCompatActivity {
     private static String showTags = "contributor";
     private static final String API_KEY = "1aefe6a9-8256-4ed1-9705-078617ffba7b";
     private static View loading;
-
-    //https://content.guardianapis.com/search?
-    // section=artanddesign&format=json&order-by=newest&page-size=20&show-tags=contributor&api-key=test
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,8 +83,9 @@ public class MainActivity extends AppCompatActivity {
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
 
         if(netInfo != null  && netInfo.isConnected()){
-            //AsyncTask to retrieve data from a background thread
-            new NewsAsyncTask().execute(NEWS_URL);
+            //initialize the loader to retrieve data
+            LoaderManager loaderManager = getLoaderManager();
+            loaderManager.initLoader(1, null, this);
         }else{
             //If there is no network
             loading.setVisibility(View.GONE);
@@ -95,34 +94,32 @@ public class MainActivity extends AppCompatActivity {
         newsView.setAdapter(newsAdapter);
     }
 
-    private static class NewsAsyncTask extends AsyncTask<String,Void, List<News>>{
+    @Override
+    public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
+        //Create the query parameters
+        Uri baseUri = Uri.parse(NEWS_URL);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
 
-        @Override
-        protected List<News> doInBackground(String... urls) {
-            if(urls == null){
-                return null;
-            }
+        uriBuilder.appendQueryParameter("use-date", useDate);
+        uriBuilder.appendQueryParameter("order-by", orderBy);
+        // uriBuilder.appendQueryParameter("section", section);
+        uriBuilder.appendQueryParameter("show-tags", showTags);
+        uriBuilder.appendQueryParameter("api-key", API_KEY);
+        Log.d(LOG, "The query has been built");
 
-            //Create the query parameters
-            Uri baseUri = Uri.parse(NEWS_URL);
-            Uri.Builder uriBuilder = baseUri.buildUpon();
+        return new NewsLoader(MainActivity.this, uriBuilder.toString());
+    }
 
-            uriBuilder.appendQueryParameter("use-date", useDate);
-            uriBuilder.appendQueryParameter("order-by", orderBy);
-           // uriBuilder.appendQueryParameter("section", section);
-            uriBuilder.appendQueryParameter("show-tags", showTags);
-            uriBuilder.appendQueryParameter("api-key", API_KEY);
-            Log.d(LOG, "The query has been built");
-            return QueryUtils.fetchEarthquakeData(uriBuilder.toString());
-        }
-
-        @Override
-        protected void onPostExecute(List<News> news) {
-            if (news != null && !news.isEmpty()) {
-                loading.setVisibility(View.GONE);
-                newsAdapter.addAll(news);
-            }
+    @Override
+    public void onLoadFinished(Loader<List<News>> loader, List<News> news) {
+        if (news != null && !news.isEmpty()) {
+            loading.setVisibility(View.GONE);
+            newsAdapter.addAll(news);
         }
     }
 
+    @Override
+    public void onLoaderReset(Loader<List<News>> loader) {
+        newsAdapter.clear();
+    }
 }
