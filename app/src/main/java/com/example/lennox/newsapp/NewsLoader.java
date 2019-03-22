@@ -11,9 +11,11 @@ public class NewsLoader extends AsyncTaskLoader {
 
     private static String LOG = NewsLoader.class.getSimpleName();
     private static String mUrl;
+    private static Context mContext;
 
     public NewsLoader(Context context, String url) {
         super(context);
+        mContext = context;
         mUrl = url;
     }
 
@@ -26,7 +28,7 @@ public class NewsLoader extends AsyncTaskLoader {
 
     @Override
     public List<News> loadInBackground() {
-        if(mUrl == null){
+        if (mUrl == null) {
             return null;
         }
 

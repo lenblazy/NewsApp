@@ -1,7 +1,9 @@
 package com.example.lennox.newsapp;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,6 +25,7 @@ public class QueryUtils {
     private static final String LOG = QueryUtils.class.getSimpleName();
 
     public static List<News> fetchEarthquakeData(String url) {
+
         //Create a URL OBJECT
         URL newsURL = createURL(url);
         String jsonResponse = "";

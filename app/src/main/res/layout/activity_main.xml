@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="6dp"
     xmlns:tool="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
+
+    <!-- Todo: 1. Find an icon to use as app icon -->
+    <!-- Todo: 2. Create a material design -->
 
     <ProgressBar
         android:id="@+id/loading"

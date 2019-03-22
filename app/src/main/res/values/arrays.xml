@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="settings_sections_values">
+        <item>@string/football</item>
+        <item>@string/business</item>
+        <item>@string/politics</item>
+        <item>@string/worldNews</item>
+        <item>@string/education</item>
+        <item>@string/books</item>
+        <item>@string/ukNews</item>
+        <item>@string/usNews</item>
+        <item>@string/opinion</item>
+        <item>@string/television</item>
+        <item>@string/film</item>
+        <item>@string/settings_sections_default</item>
+    </string-array>
+
+    <string-array name="settings_order_by">
+        <item>@string/newest</item>
+        <item>@string/oldest</item>
+        <item>@string/relevance</item>
+    </string-array>
+
+</resources>

@@ -7,7 +7,7 @@ public class News {
     private String newsURL;
     private String author;
 
-    public News(String articleName, String sectionName, String datePublished,String author, String newsURL) {
+    public News(String articleName, String sectionName, String datePublished, String author, String newsURL) {
         this.articleName = articleName;
         this.sectionName = sectionName;
         this.datePublished = datePublished;

@@ -17,13 +17,13 @@ import java.util.ArrayList;
 
 public class NewsAdapter extends ArrayAdapter<News> {
     public NewsAdapter(Activity context, ArrayList<News> newsList) {
-        super(context,0, newsList);
+        super(context, 0, newsList);
     }
 
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         View listItemView = view;
-        if(listItemView == null){
+        if (listItemView == null) {
             listItemView = LayoutInflater.from(getContext()).inflate(R.layout.item_list, parent, false);
         }
 
@@ -48,7 +48,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
 
         //separating the date and time and format them
         datePublished.setText(formatTime(currentNews.getDatePublished(), "date"));
-        timePublished.setText(formatTime(currentNews.getDatePublished(),"time"));
+        timePublished.setText(formatTime(currentNews.getDatePublished(), "time"));
 
         TextView author = (TextView) listItemView.findViewById(R.id.author);
         //to change this later after being able to extract author
@@ -59,7 +59,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
 
     private int getSectionColor(String sectionName) {
         int sectionColorResourceId;
-        switch(sectionName){
+        switch (sectionName) {
             case "Football":
             case "Sports":
                 sectionColorResourceId = R.color.football;
@@ -102,11 +102,11 @@ public class NewsAdapter extends ArrayAdapter<News> {
     private String formatTime(String datePublished, String category) {
         String separator = "T";
         String date = "";
-        if(datePublished.contains(separator)){
+        if (datePublished.contains(separator)) {
             String[] parts = datePublished.split(separator);
-            if(category.equals("date")){
+            if (category.equals("date")) {
                 date += parts[0];
-            }else{
+            } else {
                 date += parts[1];
             }
         }
