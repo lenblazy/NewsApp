@@ -2,6 +2,7 @@ package com.example.lennox.newsapp;
 
 import android.app.LoaderManager;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
@@ -13,8 +14,12 @@ import android.os.AsyncTask;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,25 +32,25 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderCallbacks<List<News>> {
+public class MainActivity extends AppCompatActivity implements LoaderCallbacks<List<News>>, SearchView.OnQueryTextListener {
 
     private static final String LOG = MainActivity.class.getSimpleName();
     private static final String NEWS_URL = "https://content.guardianapis.com/search?";
     private static NewsAdapter newsAdapter;
-    private static String orderBy = "newest";
-    private static String section = "";
-    private static String useDate = "published";
     private static final String API_KEY = "1aefe6a9-8256-4ed1-9705-078617ffba7b";
     private static View loading;
     private MyParceable myClass;
     private TextView emptyState;
     private ListView newsView;
+    String queryText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState); //always call the superclass first
         setContentView(R.layout.activity_main);
-        //Todo: Allow app to save a state such that data is not lost after closing application
+
+        Toolbar myToolbar = findViewById(R.id.action_toolbar);
+        setSupportActionBar(myToolbar);
 
         emptyState = findViewById(R.id.empty_view);
         newsView = findViewById(R.id.news_list);
@@ -83,7 +88,11 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        //Todo: 1. Create a new search menu item that allows user to search for keyword
+
+        MenuItem searchItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(this);
+
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -105,15 +114,14 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     //reset the adapter and add new data
     private void refresh() {
         //clear existing data
+
         emptyState.setText("No internet connection!!!");
         newsAdapter.clear();
         loading.setVisibility(View.VISIBLE);
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
         if (netInfo != null && netInfo.isConnected()) {
-            //refresh the loader to retrieve data
-            LoaderManager loaderManager = getLoaderManager();
-            loaderManager.initLoader(1, null, this);
+            getLoaderManager().restartLoader(1, null, this);
         } else {
             //If there is no network
             loading.setVisibility(View.GONE);
@@ -134,6 +142,19 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         myClass = savedInstanceState.getParcelable("obj");
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        getLoaderManager().restartLoader(1, null, this);
+        supportInvalidateOptionsMenu();
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        queryText = !TextUtils.isEmpty(newText) ? newText : null;
+        return true;
     }
 
     public static class MyParceable implements Parcelable {
@@ -179,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
         // Call the preferences to help build the uri
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
         String newsSection = sharedPreferences.getString(
                 getString(R.string.settings_sections_key),
                 getString(R.string.settings_sections_default));
@@ -199,13 +221,17 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             uriBuilder.appendQueryParameter("section", newsSection);
         }
         //Todo: 2. Extract string from search editText to search news keyword
+        if(queryText != null){
+            uriBuilder.appendQueryParameter("q", queryText);
+            Log.d(LOG, "Query text aint null: "+queryText);
+        }
+
         uriBuilder.appendQueryParameter("page-size", newsLimit);
         uriBuilder.appendQueryParameter("order-by", newsOrder);
         uriBuilder.appendQueryParameter("use-date", "published");
         uriBuilder.appendQueryParameter("show-tags", "contributor");
         uriBuilder.appendQueryParameter("api-key", API_KEY);
 
-        Log.d(LOG, "The query has been built");
         return new NewsLoader(MainActivity.this, uriBuilder.toString());
     }
 

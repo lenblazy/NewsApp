@@ -26,10 +26,9 @@
         android:id="@+id/news_headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold"
         android:maxLines="2"
         android:ellipsize="end"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
         tool:text="This is the news headline Long placeholder location that should wrap to more than 2 lines of text"
         android:layout_toEndOf="@id/news_section"
         android:layout_marginStart="6dp"
@@ -41,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/news_section"
         android:layout_marginStart="6dp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
         android:orientation="vertical"
         android:layout_toEndOf="@id/news_section" >
 

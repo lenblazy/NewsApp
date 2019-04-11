@@ -3,11 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tool="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity">
 
     <!-- Todo: 1. Find an icon to use as app icon -->
     <!-- Todo: 2. Create a material design -->
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/action_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        />
 
     <ProgressBar
         android:id="@+id/loading"
@@ -16,6 +23,7 @@
         android:layout_height="wrap_content" />
 
     <ListView
+        android:layout_below="@id/action_toolbar"
         android:id="@+id/news_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
