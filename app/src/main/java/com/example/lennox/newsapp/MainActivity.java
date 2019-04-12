@@ -17,6 +17,8 @@ import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -41,8 +43,9 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     private static View loading;
     private MyParceable myClass;
     private TextView emptyState;
-    private ListView newsView;
+    private RecyclerView newsRecyclerView;
     String queryText;
+    List<News> newsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,14 +56,18 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         setSupportActionBar(myToolbar);
 
         emptyState = findViewById(R.id.empty_view);
-        newsView = findViewById(R.id.news_list);
+        newsRecyclerView = findViewById(R.id.news_list);
+        newsRecyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+
         loading = findViewById(R.id.loading);
-        newsView.setEmptyView(emptyState);
+
+        newsList = new ArrayList<News>();
 
         //Create the adapter
-        newsAdapter = new NewsAdapter(this, new ArrayList<News>());
+        newsAdapter = new NewsAdapter(this, newsList);
 
-        newsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+/*
+        newsRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 //Get current position of news item
@@ -68,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
                 Uri newsUri = Uri.parse(currentNews.getNewsURL());
                 startActivity(new Intent(Intent.ACTION_VIEW, newsUri));
             }
-        });
+        });*/
 
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
@@ -77,12 +84,14 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
             //initialize the loader to retrieve data
             LoaderManager loaderManager = getLoaderManager();
             loaderManager.initLoader(1, null, this);
+            emptyState.setVisibility(View.GONE);
+            newsRecyclerView.setAdapter(newsAdapter);
         } else {
             //If there is no network
             loading.setVisibility(View.GONE);
             emptyState.setText("No internet connection!!!");
+            newsRecyclerView.setVisibility(View.GONE);
         }
-        newsView.setAdapter(newsAdapter);
     }
 
     @Override
@@ -113,10 +122,10 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     //reset the adapter and add new data
     private void refresh() {
-        //clear existing data
 
-        emptyState.setText("No internet connection!!!");
-        newsAdapter.clear();
+        newsList.clear();
+
+        emptyState.setVisibility(View.GONE);
         loading.setVisibility(View.VISIBLE);
         ConnectivityManager conMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
@@ -125,9 +134,9 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         } else {
             //If there is no network
             loading.setVisibility(View.GONE);
-            newsView.setEmptyView(emptyState);
+            emptyState.setVisibility(View.VISIBLE);
         }
-        newsView.setAdapter(newsAdapter);
+        newsRecyclerView.setAdapter(newsAdapter);
     }
 
     //Saves state of app
@@ -192,11 +201,6 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
 
     @Override
     public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
-         /*
-1. https://content.guardianapis.com/search?q=debate&tag=politics/politics&from-date=2014-01-01&api-key=test
-4. https://content.guardianapis.com/search?from-date=2018-12-25&api-key=1aefe6a9-8256-4ed1-9705-078617ffba7b
-5. https://content.guardianapis.com/search?from-date=2018-12-25&to-date=2021-12-26&api-key=1aefe6a9-8256-4ed1-9705-078617ffba7b
-     */
 
         // Call the preferences to help build the uri
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -220,10 +224,9 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
         if (!newsSection.equals("All")) {
             uriBuilder.appendQueryParameter("section", newsSection);
         }
-        //Todo: 2. Extract string from search editText to search news keyword
+
         if(queryText != null){
             uriBuilder.appendQueryParameter("q", queryText);
-            Log.d(LOG, "Query text aint null: "+queryText);
         }
 
         uriBuilder.appendQueryParameter("page-size", newsLimit);
@@ -239,15 +242,20 @@ public class MainActivity extends AppCompatActivity implements LoaderCallbacks<L
     public void onLoadFinished(Loader<List<News>> loader, List<News> news) {
         if (news != null && !news.isEmpty()) {
             loading.setVisibility(View.GONE);
-            newsAdapter.addAll(news);
+            //add data to the recycler view
+            newsList.addAll(news);
+            newsAdapter.notifyDataSetChanged();
+            Log.i(LOG, " news is not empty bro");
         } else {
             loading.setVisibility(View.GONE);
             emptyState.setText("No results found!!!");
+            Log.i(LOG, "NULL-> news is empty bro");
         }
     }
 
     @Override
     public void onLoaderReset(Loader<List<News>> loader) {
-        newsAdapter.clear();
+        newsList.clear();
+        newsAdapter.notifyDataSetChanged(); // let your adapter know about the changes and reload view.
     }
 }

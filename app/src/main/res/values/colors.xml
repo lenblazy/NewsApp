@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimaryDark">#115201</color>
     <color name="colorPrimary">#69D621</color>
-    <color name="colorAccent">#EEFF00</color>
+    <color name="colorAccent">#3F4402</color>
 
     <!-- news categories -->
     <color name="unknown">#FF6C696A</color>

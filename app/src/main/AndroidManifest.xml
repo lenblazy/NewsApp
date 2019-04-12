@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity
+            android:theme="@style/SettingsTheme"
             android:name=".Settings"
             android:parentActivityName=".MainActivity">
             <meta-data

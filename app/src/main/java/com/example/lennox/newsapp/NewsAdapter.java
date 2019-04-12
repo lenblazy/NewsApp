@@ -1,60 +1,25 @@
 package com.example.lennox.newsapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
+import java.util.List;
 
-import java.util.ArrayList;
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolder> {
 
-public class NewsAdapter extends ArrayAdapter<News> {
-    public NewsAdapter(Activity context, ArrayList<News> newsList) {
-        super(context, 0, newsList);
-    }
+    private Context mContext;
+    private List<News> newsList;
 
-    @Override
-    public View getView(int position, View view, ViewGroup parent) {
-        View listItemView = view;
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(R.layout.item_list, parent, false);
-        }
-
-        News currentNews = getItem(position);
-
-        TextView newsHeadline = listItemView.findViewById(R.id.news_headline);
-        newsHeadline.setText(currentNews.getArticleName());
-
-        TextView newsSection = (TextView) listItemView.findViewById(R.id.news_section);
-        newsSection.setText(currentNews.getSectionName());
-
-        GradientDrawable sectionCircle = (GradientDrawable) newsSection.getBackground();
-
-        // Get the appropriate background color based on the current earthquake magnitude
-        int sectionColor = getSectionColor(currentNews.getSectionName());
-
-        // Set the color on the magnitude circle
-        sectionCircle.setColor(sectionColor);
-
-        TextView datePublished = (TextView) listItemView.findViewById(R.id.date);
-        TextView timePublished = (TextView) listItemView.findViewById(R.id.time);
-
-        //separating the date and time and format them
-        datePublished.setText(formatTime(currentNews.getDatePublished(), "date"));
-        timePublished.setText(formatTime(currentNews.getDatePublished(), "time"));
-
-        TextView author = (TextView) listItemView.findViewById(R.id.author);
-        //to change this later after being able to extract author
-        author.setText("Author: " + currentNews.getAuthor());
-
-        return listItemView;
+    public NewsAdapter(Context mContext, List<News> newsList) {
+        this.mContext = mContext;
+        this.newsList = newsList;
     }
 
     private int getSectionColor(String sectionName) {
@@ -95,7 +60,7 @@ public class NewsAdapter extends ArrayAdapter<News> {
                 sectionColorResourceId = R.color.unknown;
                 break;
         }
-        return ContextCompat.getColor(getContext(), sectionColorResourceId);
+        return ContextCompat.getColor(mContext, sectionColorResourceId);
     }
 
 
@@ -112,4 +77,54 @@ public class NewsAdapter extends ArrayAdapter<News> {
         }
         return date;
     }
-}
+
+    @NonNull
+    @Override
+    public NewsViewsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_view_news,parent,false);
+        return new NewsViewsHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull NewsViewsHolder holder, int position) {
+        News news= newsList.get(position);
+        holder.tvNewsHeadline.setText(news.getArticleName());
+
+        holder.tvNewsSection.setText(news.getSectionName());
+        GradientDrawable sectionCircle = (GradientDrawable) holder.tvNewsSection.getBackground();
+
+        // Get the appropriate background color based on the current earthquake magnitude
+        int sectionColor = getSectionColor(news.getSectionName());
+
+        // Set the color on the magnitude circle
+        sectionCircle.setColor(sectionColor);
+
+        holder.tvNewsTime.setText(formatTime(news.getDatePublished(), "time"));
+        holder.tvNewsDate.setText(formatTime(news.getDatePublished(), "date"));
+
+        holder.tvNewsAuthor.setText("Author: "+ news.getAuthor());
+    }
+
+    @Override
+    public int getItemCount() {
+        return newsList.size();
+    }
+
+    public class NewsViewsHolder extends RecyclerView.ViewHolder{
+        private TextView tvNewsSection;
+        private TextView tvNewsHeadline;
+        private TextView tvNewsDate;
+        private TextView tvNewsTime;
+        private TextView tvNewsAuthor;
+
+        public NewsViewsHolder(View itemView) {
+            super(itemView);
+            tvNewsAuthor = itemView.findViewById(R.id.author);
+            tvNewsHeadline = itemView.findViewById(R.id.news_headline);
+            tvNewsDate = itemView.findViewById(R.id.date);
+            tvNewsTime = itemView.findViewById(R.id.time);
+            tvNewsSection = itemView.findViewById(R.id.news_section);
+
+        }
+    }//end inner class
+}//end class NewsAdpater
