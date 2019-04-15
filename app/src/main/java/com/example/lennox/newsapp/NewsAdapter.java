@@ -88,7 +88,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
     public NewsViewsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_view_news, parent, false);
 
-
+        //Todo: set up an onclick listener for the app
 
         return new NewsViewsHolder(view);
     }
@@ -99,14 +99,18 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
         holder.tvNewsHeadline.setText(news.getArticleName());
 
         //Get image url and load it using picasso
-        Picasso.get().load(news.getAuthorImage()).into(holder.ivAuthorImage);
+        if(news.getAuthorImage()!= null){
+            Picasso.get().load(news.getAuthorImage()).into(holder.ivAuthorImage);
+        }else{
+            Picasso.get().load(R.drawable.default_user).into(holder.ivAuthorImage);
+        }
 
         holder.tvAuthorName.setText(news.getAuthor());
 
         //Todo: Extract this date and relate it to current time
         holder.tvTime.setText(news.getDatePublished());
 
-        Picasso.get().load("R.drawable.more").into(holder.ivMore);
+        Picasso.get().load(R.drawable.more).into(holder.ivMore);
 
         holder.tvNewsBody.setText(news.getBodyText());
 

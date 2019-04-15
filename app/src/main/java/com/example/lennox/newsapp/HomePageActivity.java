@@ -14,7 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -56,6 +58,27 @@ public class HomePageActivity extends AppCompatActivity implements LoaderCallbac
 
         drNavImage = findViewById(R.id.iv_nav_drawer);
         etNewsSearch = findViewById(R.id.et_search_news);
+
+        // A drawable click listener
+        etNewsSearch.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                final int DRAWABLE_LEFT = 0;
+                final int DRAWABLE_TOP = 1;
+                final int DRAWABLE_RIGHT = 2;
+                final int DRAWABLE_BOTTOM = 3;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if (event.getRawX() >= (etNewsSearch.getRight() - etNewsSearch.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        String query = etNewsSearch.getText().toString().trim();
+                        etNewsSearch.setText("");
+                        Toast.makeText(getApplicationContext(), query, Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
 
         newsList = new ArrayList<News>();
 
