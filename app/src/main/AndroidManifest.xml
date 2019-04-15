@@ -5,7 +5,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- android:launchMode="singleInstance" -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,10 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".MainActivity"
+        <activity android:name=".HomePageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="Habari">
+            android:label="Habari"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,9 +23,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:theme="@style/SettingsTheme"
             android:name=".Settings"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".HomePageActivity"
+            android:theme="@style/SettingsTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Settings" />

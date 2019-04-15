@@ -1,14 +1,18 @@
 package com.example.lennox.newsapp;
 
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -22,6 +26,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
         this.newsList = newsList;
     }
 
+    //Todo: move different news sections to different fragments
     private int getSectionColor(String sectionName) {
         int sectionColorResourceId;
         switch (sectionName) {
@@ -63,7 +68,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
         return ContextCompat.getColor(mContext, sectionColorResourceId);
     }
 
-
+    //Todo: Extract time such that time of post is relevant to the current time
     private String formatTime(String datePublished, String category) {
         String separator = "T";
         String date = "";
@@ -81,28 +86,35 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
     @NonNull
     @Override
     public NewsViewsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_view_news,parent,false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_view_news, parent, false);
+
+
+
         return new NewsViewsHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NewsViewsHolder holder, int position) {
-        News news= newsList.get(position);
+        News news = newsList.get(position);
         holder.tvNewsHeadline.setText(news.getArticleName());
 
-        holder.tvNewsSection.setText(news.getSectionName());
-        GradientDrawable sectionCircle = (GradientDrawable) holder.tvNewsSection.getBackground();
+        //Get image url and load it using picasso
+        Picasso.get().load(news.getAuthorImage()).into(holder.ivAuthorImage);
 
-        // Get the appropriate background color based on the current earthquake magnitude
-        int sectionColor = getSectionColor(news.getSectionName());
+        holder.tvAuthorName.setText(news.getAuthor());
 
-        // Set the color on the magnitude circle
-        sectionCircle.setColor(sectionColor);
+        //Todo: Extract this date and relate it to current time
+        holder.tvTime.setText(news.getDatePublished());
 
-        holder.tvNewsTime.setText(formatTime(news.getDatePublished(), "time"));
-        holder.tvNewsDate.setText(formatTime(news.getDatePublished(), "date"));
+        Picasso.get().load("R.drawable.more").into(holder.ivMore);
 
-        holder.tvNewsAuthor.setText("Author: "+ news.getAuthor());
+        holder.tvNewsBody.setText(news.getBodyText());
+
+        holder.newsRating.setRating(Integer.parseInt(news.getNewsRating()));
+
+        Picasso.get().load(news.getHeadLinePictureURL()).into(holder.ivNewsImage);
+
+
     }
 
     @Override
@@ -110,21 +122,29 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
         return newsList.size();
     }
 
-    public class NewsViewsHolder extends RecyclerView.ViewHolder{
-        private TextView tvNewsSection;
+    public class NewsViewsHolder extends RecyclerView.ViewHolder {
+        private ImageView ivAuthorImage;
+        private TextView tvAuthorName;
+        private TextView tvTime;
+        private ImageView ivMore;
         private TextView tvNewsHeadline;
-        private TextView tvNewsDate;
-        private TextView tvNewsTime;
-        private TextView tvNewsAuthor;
+        private TextView tvNewsBody;
+        private RatingBar newsRating;
+        private ImageView ivNewsImage;
 
         public NewsViewsHolder(View itemView) {
             super(itemView);
-            tvNewsAuthor = itemView.findViewById(R.id.author);
-            tvNewsHeadline = itemView.findViewById(R.id.news_headline);
-            tvNewsDate = itemView.findViewById(R.id.date);
-            tvNewsTime = itemView.findViewById(R.id.time);
-            tvNewsSection = itemView.findViewById(R.id.news_section);
+
+            ivAuthorImage = itemView.findViewById(R.id.iv_author_image);
+            tvAuthorName = itemView.findViewById(R.id.tv_author_name);
+            tvTime = itemView.findViewById(R.id.time);
+            ivMore = itemView.findViewById(R.id.iv_more);
+            tvNewsHeadline = itemView.findViewById(R.id.tv_news_headline);
+            tvNewsBody = itemView.findViewById(R.id.tv_news_body);
+            newsRating = itemView.findViewById(R.id.news_rating);
+            ivNewsImage = itemView.findViewById(R.id.iv_news_image);
+
 
         }
     }//end inner class
-}//end class NewsAdpater
+}//end class NewsAdapter

@@ -4,6 +4,17 @@
     <color name="colorPrimary">#69D621</color>
     <color name="colorAccent">#3F4402</color>
 
+    <color name="colorText">#585858</color>
+    <color name="colorDivider">#64dad8d8</color>
+    <color name="colorBlue">#4c71f5</color>
+    <color name="colorSub">#b0afaf</color>
+
+    <color name="listSub1">#7b7b7b</color>
+    <color name="listSub2">#9e9e9e</color>
+    <color name="listText">#585858</color>
+
+    <color name="ratingBar">#F7D601</color>
+
     <!-- news categories -->
     <color name="unknown">#FF6C696A</color>
     <color name="football">#242428</color>

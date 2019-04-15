@@ -48,7 +48,7 @@ public class QueryUtils {
         }
 
         List<News> newsList = new ArrayList<>();
-
+        //articleName,sectionName,datePublished,newsURL,author,headLinePictureURL,bodyText,newsRating,authorImage
         try {
             JSONObject root = new JSONObject(jsonResponse);
             JSONObject response = root.getJSONObject("response");
@@ -61,13 +61,44 @@ public class QueryUtils {
                 String section = currentNews.getString("sectionName");
                 String datePublished = currentNews.getString("webPublicationDate");
                 String webURL = currentNews.getString("webUrl");
-                JSONArray tags = currentNews.getJSONArray("tags");
-                for(int j = 0; j< tags.length(); j++){
-                    JSONObject firstAuthor = tags.getJSONObject(j);
-                    String contributor = firstAuthor.getString("webTitle");
-                    News news = new News(article,section,datePublished, contributor,webURL);
-                    newsList.add(news);
-                }//end inner for
+
+                // extracting from the fields object
+                JSONObject fields = currentNews.getJSONObject("fields");
+
+                String newsImage = fields.getString("thumbnail");
+                String bodyText = fields.getString("bodyText");
+                //todo: get the star ratings
+                String starRating = "3";
+                if(fields.has("starRating")){
+                    starRating = fields.getString("starRating");
+                }
+
+                String contributor = "Anonymous";
+                String contributorProfile = "Not available";
+                String authorImage = "R.drawable.default_user";
+                String twitterHandle = "Not available";
+
+                if(currentNews.length()>0){
+                    JSONArray tags = currentNews.getJSONArray("tags");
+                    //extracting from the tags array
+                    JSONObject firstAuthor = tags.getJSONObject(0);
+                    contributor = firstAuthor.getString("webTitle");
+                    contributorProfile = firstAuthor.getString("webUrl");
+                    authorImage = "Anonymous";
+                    twitterHandle = "Unavailable";
+
+                    if(firstAuthor.has("bylineImageUrl")){
+                        authorImage = firstAuthor.getString("bylineImageUrl");
+                    }
+                    if(firstAuthor.has("twitterHandle")){
+                        twitterHandle = firstAuthor.getString("twitterHandle");
+                    }
+                }
+
+                News news = new News(article, section, datePublished, webURL, contributor,
+                        contributorProfile, authorImage, twitterHandle, newsImage,bodyText, starRating);
+                newsList.add(news);
+
                 Log.d(LOG, "JSON extracted");
             }//end outer for
         } catch (JSONException e) {
