@@ -14,10 +14,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -36,6 +36,7 @@ public class HomePageActivity extends AppCompatActivity implements LoaderCallbac
     private static final String NEWS_URL = "https://content.guardianapis.com/search?";
     private static final String TAG = HomePageActivity.class.getSimpleName();
     private MyParceable myClass;
+    String queryText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,16 +64,20 @@ public class HomePageActivity extends AppCompatActivity implements LoaderCallbac
         etNewsSearch.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
-                final int DRAWABLE_LEFT = 0;
-                final int DRAWABLE_TOP = 1;
                 final int DRAWABLE_RIGHT = 2;
-                final int DRAWABLE_BOTTOM = 3;
 
-                if(event.getAction() == MotionEvent.ACTION_UP) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
                     if (event.getRawX() >= (etNewsSearch.getRight() - etNewsSearch.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
-                        String query = etNewsSearch.getText().toString().trim();
+                        queryText = etNewsSearch.getText().toString().trim();
                         etNewsSearch.setText("");
-                        Toast.makeText(getApplicationContext(), query, Toast.LENGTH_SHORT).show();
+                        // Check if no view has focus:
+                        //View v = HomePageActivity.this.getCurrentFocus();
+                        if (view!= null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                            view.clearFocus();
+                        }
+                        refresh();
                         return true;
                     }
                 }
@@ -124,19 +129,18 @@ public class HomePageActivity extends AppCompatActivity implements LoaderCallbac
         if (!newsSection.equals("All")) {
             uriBuilder.appendQueryParameter("section", newsSection);
         }
-        //Todo: make this active after extracting data from the edittext
-/*
-        if(queryText != null){
+
+        if (queryText != null) {
             uriBuilder.appendQueryParameter("q", queryText);
         }
-*/
-        uriBuilder.appendQueryParameter("page-size", newsLimit);
+
+        uriBuilder.appendQueryParameter("page-size", "10");
         uriBuilder.appendQueryParameter("order-by", newsOrder);
         uriBuilder.appendQueryParameter("use-date", "published");
         uriBuilder.appendQueryParameter("show-tags", "contributor");
         uriBuilder.appendQueryParameter("show-fields", "headline,bodyText,thumbnail,starRating");
         uriBuilder.appendQueryParameter("api-key", API_KEY);
-        Log.i(TAG,uriBuilder.toString());
+        Log.i(TAG, uriBuilder.toString());
         return new NewsLoader(HomePageActivity.this, uriBuilder.toString());
     }
 
@@ -160,7 +164,7 @@ public class HomePageActivity extends AppCompatActivity implements LoaderCallbac
 
     //reset the adapter and add new data
     private void refresh() {
-
+        Toast.makeText(getApplicationContext(), queryText, Toast.LENGTH_SHORT).show();
         newsList.clear();
 
         //emptyState.setVisibility(View.GONE);
@@ -171,58 +175,57 @@ public class HomePageActivity extends AppCompatActivity implements LoaderCallbac
             getLoaderManager().restartLoader(1, null, this);
         } else {
             //If there is no network
-           // loading.setVisibility(View.GONE);
-           // emptyState.setVisibility(View.VISIBLE);
+            // loading.setVisibility(View.GONE);
+            // emptyState.setVisibility(View.VISIBLE);
         }
-      //  newsRecyclerView.setAdapter(newsAdapter);
-
-
+          recyclerNews.setAdapter(newsAdapter);
     }//end method refresh
 
     //Saves state of app
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("obj", myClass);
+    }
+
+    //Used to prevent calling onCreate() after screen rotation
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        myClass = savedInstanceState.getParcelable("obj");
+    }
+
+    public static class MyParceable implements Parcelable {
+        private int mData;
+
         @Override
-        protected void onSaveInstanceState(Bundle outState) {
-            super.onSaveInstanceState(outState);
-            outState.putParcelable("obj", myClass);
+        public int describeContents() {
+            return 0;
         }
 
-        //Used to prevent calling onCreate() after screen rotation
+        // save object in parcel
         @Override
-        protected void onRestoreInstanceState(Bundle savedInstanceState) {
-            super.onRestoreInstanceState(savedInstanceState);
-            myClass = savedInstanceState.getParcelable("obj");
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeInt(mData);
         }
 
-        public static class MyParceable implements Parcelable {
-            private int mData;
+        public static final Parcelable.Creator<MyParceable> CREATOR =
+                new Parcelable.Creator<MyParceable>() {
+                    @Override
+                    public MyParceable createFromParcel(Parcel in) {
+                        return new MyParceable(in);
+                    }
 
-            @Override
-            public int describeContents() {
-                return 0;
-            }
+                    @Override
+                    public MyParceable[] newArray(int size) {
+                        return new MyParceable[size];
+                    }
+                };
 
-            // save object in parcel
-            @Override
-            public void writeToParcel(Parcel out, int flags) {
-                out.writeInt(mData);
-            }
-
-            public static final Parcelable.Creator<MyParceable> CREATOR =
-                    new Parcelable.Creator<MyParceable>() {
-                        @Override
-                        public MyParceable createFromParcel(Parcel in) {
-                            return new MyParceable(in);
-                        }
-
-                        @Override
-                        public MyParceable[] newArray(int size) {
-                            return new MyParceable[size];
-                        }
-                    };
-
-            // recreate object from parcel
-            private MyParceable(Parcel in) {
-                mData = in.readInt();
-            }
+        // recreate object from parcel
+        private MyParceable(Parcel in) {
+            mData = in.readInt();
         }
+    }
+
 }
