@@ -75,7 +75,7 @@ public class QueryUtils {
 
                 String contributor = "Anonymous";
                 String contributorProfile = "Not available";
-                String authorImage = "R.drawable.default_user";
+                String authorImage = "empty";
                 String twitterHandle = "Not available";
 
                 if(currentNews.length()>0){
@@ -84,8 +84,6 @@ public class QueryUtils {
                     JSONObject firstAuthor = tags.getJSONObject(0);
                     contributor = firstAuthor.getString("webTitle");
                     contributorProfile = firstAuthor.getString("webUrl");
-                    authorImage = "Anonymous";
-                    twitterHandle = "Unavailable";
 
                     if(firstAuthor.has("bylineImageUrl")){
                         authorImage = firstAuthor.getString("bylineImageUrl");
@@ -120,11 +118,10 @@ public class QueryUtils {
             urlConnection = (HttpURLConnection) newsURL.openConnection();
             urlConnection.setRequestMethod("GET");
             urlConnection.setReadTimeout(1000);
-            urlConnection.setConnectTimeout(1500);
+            urlConnection.setConnectTimeout(2000);
             urlConnection.connect();
             inputStream = urlConnection.getInputStream();
             jsonResponse = readFromStream(inputStream);
-            Log.d(LOG, "Connected successfully");
         }catch (Exception e){
             Log.e(LOG+ ": No connection","Api could not be connected "+ e);
         }finally {
@@ -160,9 +157,7 @@ public class QueryUtils {
     private static URL createURL(String url) {
         try {
             return new URL(url);
-
         } catch (MalformedURLException e) {
-            Log.e(LOG, "URL formed badly");
             return null;
         }
     }

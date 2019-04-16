@@ -1,6 +1,8 @@
 package com.example.lennox.newsapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
@@ -20,52 +22,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
 
     private Context mContext;
     private List<News> newsList;
+    private int itemPosition;
 
     public NewsAdapter(Context mContext, List<News> newsList) {
         this.mContext = mContext;
         this.newsList = newsList;
-    }
-
-    //Todo: move different news sections to different fragments
-    private int getSectionColor(String sectionName) {
-        int sectionColorResourceId;
-        switch (sectionName) {
-            case "Football":
-            case "Sports":
-                sectionColorResourceId = R.color.football;
-                break;
-            case "Business":
-                sectionColorResourceId = R.color.business;
-                break;
-            case "Politics":
-                sectionColorResourceId = R.color.politics;
-                break;
-            case "World news":
-                sectionColorResourceId = R.color.worldNews;
-                break;
-            case "US news":
-            case "UK news":
-                sectionColorResourceId = R.color.usnews;
-                break;
-            case "Opinion":
-                sectionColorResourceId = R.color.opinion;
-                break;
-            case "Education":
-            case "Books":
-                sectionColorResourceId = R.color.education;
-                break;
-            case "Television":
-            case "Film":
-                sectionColorResourceId = R.color.books;
-                break;
-            case "Society":
-                sectionColorResourceId = R.color.society;
-                break;
-            default:
-                sectionColorResourceId = R.color.unknown;
-                break;
-        }
-        return ContextCompat.getColor(mContext, sectionColorResourceId);
     }
 
     //Todo: Extract time such that time of post is relevant to the current time
@@ -85,24 +46,23 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
 
     @NonNull
     @Override
-    public NewsViewsHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public NewsViewsHolder onCreateViewHolder( ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_view_news, parent, false);
-
-        //Todo: set up an onclick listener for the app
-
         return new NewsViewsHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NewsViewsHolder holder, int position) {
-        News news = newsList.get(position);
+        News news = newsList.get(holder.getAdapterPosition());
+        itemPosition = position;
+
         holder.tvNewsHeadline.setText(news.getArticleName());
 
         //Get image url and load it using picasso
-        if(news.getAuthorImage()!= null){
+        if(!news.getAuthorImage().equals("empty")){
             Picasso.get().load(news.getAuthorImage()).into(holder.ivAuthorImage);
         }else{
-            Picasso.get().load(R.drawable.default_user).into(holder.ivAuthorImage);
+            holder.ivAuthorImage.setImageResource(R.drawable.default_user);
         }
 
         holder.tvAuthorName.setText(news.getAuthor());
@@ -110,7 +70,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
         //Todo: Extract this date and relate it to current time
         holder.tvTime.setText(news.getDatePublished());
 
-        Picasso.get().load(R.drawable.more).into(holder.ivMore);
+        holder.ivMore.setImageResource(R.drawable.more);
 
         holder.tvNewsBody.setText(news.getBodyText());
 
@@ -118,7 +78,14 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
 
         Picasso.get().load(news.getHeadLinePictureURL()).into(holder.ivNewsImage);
 
-
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                News currentNews = newsList.get(itemPosition);
+                Uri newsUri = Uri.parse(currentNews.getNewsURL());
+                view.getContext().startActivity(new Intent(Intent.ACTION_VIEW, newsUri));
+            }
+        });
     }
 
     @Override
@@ -147,8 +114,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
             tvNewsBody = itemView.findViewById(R.id.tv_news_body);
             newsRating = itemView.findViewById(R.id.news_rating);
             ivNewsImage = itemView.findViewById(R.id.iv_news_image);
-
-
         }
     }//end inner class
 }//end class NewsAdapter

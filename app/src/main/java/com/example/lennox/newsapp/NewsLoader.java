@@ -1,9 +1,7 @@
 package com.example.lennox.newsapp;
 
-import android.content.AsyncTaskLoader;
+import android.support.v4.content.AsyncTaskLoader;
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
 
 import java.util.List;
 

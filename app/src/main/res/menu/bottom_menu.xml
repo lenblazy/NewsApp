@@ -1,8 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/menu_bottom"
-        android:title="Categories"
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item
+        android:id="@+id/menu_world"
+        android:title="World"
+        android:icon="@drawable/ic_world"
         />
+
+    <item
+        android:id="@+id/menu_home"
+        android:title="Home"
+        android:icon="@drawable/ic_home"
+        />
+
+     <item
+        android:id="@+id/menu_sports"
+        android:title="Sports"
+        android:icon="@drawable/sports"
+        />
+
+
+    <!--
+           <item
+               android:id="@+id/menu_tech"
+               android:title="Technology"
+               android:icon="@drawable/ic_technology"
+               />
+
+               <item
+                   android:id="@+id/menu_environment"
+                   android:title="Environment"
+                   android:icon="@drawable/ic_environment"
+                   /> -->
+<!--
+    <item
+        android:id="@+id/menu_society"
+        android:title="Society"
+        android:icon="@drawable/ic_society"
+        />
+
+    <item
+        android:id="@+id/menu_fashion"
+        android:title="Fashion"
+        android:icon="@drawable/ic_fashion"
+        />
+
+    <item
+        android:id="@+id/menu_business"
+        android:title="Business"
+        android:icon="@drawable/ic_business"
+        />
+
+    <item
+        android:id="@+id/menu_culture"
+        android:title="Culcture"
+        android:icon="@drawable/ic_culture"
+        />
+
+    <item
+        android:id="@+id/menu_music"
+        android:title="Music"
+        android:icon="@drawable/ic_music"
+        />
+
+    <item
+        android:id="@+id/menu_education"
+        android:title="Education"
+        android:icon="@drawable/ic_education" /> -->
+
 </menu>
