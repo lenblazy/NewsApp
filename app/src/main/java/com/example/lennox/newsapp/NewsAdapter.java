@@ -6,17 +6,26 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolder> {
 
@@ -29,48 +38,76 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
         this.newsList = newsList;
     }
 
-    //Todo: Extract time such that time of post is relevant to the current time
-    private String formatTime(String datePublished, String category) {
-        String separator = "T";
-        String date = "";
-        if (datePublished.contains(separator)) {
-            String[] parts = datePublished.split(separator);
-            if (category.equals("date")) {
-                date += parts[0];
-            } else {
-                date += parts[1];
-            }
-        }
-        return date;
-    }
-
     @NonNull
     @Override
-    public NewsViewsHolder onCreateViewHolder( ViewGroup parent, int viewType) {
+    public NewsViewsHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_view_news, parent, false);
         return new NewsViewsHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull NewsViewsHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final NewsViewsHolder holder, int position) {
         News news = newsList.get(holder.getAdapterPosition());
-        itemPosition = position;
+        itemPosition = holder.getAdapterPosition();
+
+        long MIN_MILLIS = 1000 * 60;
+        long HR_MILLIS = 60 * MIN_MILLIS;
+        long DAY_MILLIS = 24 * HR_MILLIS;
+        long dateMillis;
+        String date = "";
+        long now = System.currentTimeMillis();
+        Date guardianDate;
+        SimpleDateFormat sDateFormat = new SimpleDateFormat("dd MMM");
 
         holder.tvNewsHeadline.setText(news.getArticleName());
 
         //Get image url and load it using picasso
-        if(!news.getAuthorImage().equals("empty")){
+        if (!news.getAuthorImage().equals("empty")) {
             Picasso.get().load(news.getAuthorImage()).into(holder.ivAuthorImage);
-        }else{
+        } else {
             holder.ivAuthorImage.setImageResource(R.drawable.default_user);
         }
 
         holder.tvAuthorName.setText(news.getAuthor());
 
-        //Todo: Extract this date and relate it to current time
-        holder.tvTime.setText(news.getDatePublished());
+        try {
+            DateFormat guardianDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            guardianDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-        holder.ivMore.setImageResource(R.drawable.more);
+            guardianDate = guardianDateFormat.parse(news.getDatePublished());
+            dateMillis = guardianDate.getTime();
+
+            if (now - dateMillis < (DAY_MILLIS)) {
+                if (now - dateMillis < (HR_MILLIS)) {
+                    long mins = Math.round((now - dateMillis) / MIN_MILLIS);
+                    if (String.valueOf(mins).equals("1")) {
+                        date = String.valueOf(mins) + " min ago";
+                    } else {
+                        date = String.valueOf(mins) + " mins ago";
+                    }
+
+                } else {
+                    long mins = Math.round((now - dateMillis) / HR_MILLIS);
+                    if (String.valueOf(mins).equals("1")) {
+                        date = String.valueOf(mins) + " hr ago";
+                    } else {
+                        date = String.valueOf(mins) + " hrs ago";
+                    }
+
+                }
+            } else {
+                Date dateDate = new Date(dateMillis);
+                date = sDateFormat.format(dateDate);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        //add a dot to the date string
+        date = "\u2022" + date;
+
+        holder.tvTime.setText(date);
+        //todo: use spinner to allow users to follow or view author's profile
 
         holder.tvNewsBody.setText(news.getBodyText());
 
@@ -81,7 +118,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                News currentNews = newsList.get(itemPosition);
+                News currentNews = newsList.get(holder.getAdapterPosition());
                 Uri newsUri = Uri.parse(currentNews.getNewsURL());
                 view.getContext().startActivity(new Intent(Intent.ACTION_VIEW, newsUri));
             }
@@ -97,11 +134,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
         private ImageView ivAuthorImage;
         private TextView tvAuthorName;
         private TextView tvTime;
-        private ImageView ivMore;
         private TextView tvNewsHeadline;
         private TextView tvNewsBody;
         private RatingBar newsRating;
         private ImageView ivNewsImage;
+        private Spinner spinner;
 
         public NewsViewsHolder(View itemView) {
             super(itemView);
@@ -109,7 +146,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
             ivAuthorImage = itemView.findViewById(R.id.iv_author_image);
             tvAuthorName = itemView.findViewById(R.id.tv_author_name);
             tvTime = itemView.findViewById(R.id.time);
-            ivMore = itemView.findViewById(R.id.iv_more);
+            spinner = itemView.findViewById(R.id.spinner);
             tvNewsHeadline = itemView.findViewById(R.id.tv_news_headline);
             tvNewsBody = itemView.findViewById(R.id.tv_news_body);
             newsRating = itemView.findViewById(R.id.news_rating);
