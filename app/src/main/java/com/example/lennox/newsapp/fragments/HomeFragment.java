@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -25,7 +26,7 @@ import android.support.v4.content.Loader;
 
 import com.example.lennox.newsapp.HomePageActivity;
 import com.example.lennox.newsapp.News;
-import com.example.lennox.newsapp.NewsAdapter;
+import com.example.lennox.newsapp.adapters.NewsAdapter;
 import com.example.lennox.newsapp.NewsLoader;
 import com.example.lennox.newsapp.R;
 
@@ -42,6 +43,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     private List<News> homeNewsList;
     private NewsAdapter newsAdapter;
     private static String TAG = HomeFragment.class.getSimpleName();
+    private Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -179,6 +181,4 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         }
         recyclerNews.setAdapter(newsAdapter);
     }//end method refresh
-
-
 }

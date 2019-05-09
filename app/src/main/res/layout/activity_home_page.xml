@@ -5,12 +5,12 @@
     android:id="@+id/appbar_layout_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomePageActivity"
-    >
+    tools:context=".HomePageActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_previous">
 
         <android.support.design.widget.CoordinatorLayout
             android:id="@+id/fragment_container"
@@ -28,14 +28,30 @@
 
     </FrameLayout>
 
+    <Button
+        android:id="@+id/btn_previous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_nav_menu"
+        android:layout_toStartOf="@id/btn_next"
+        android:text="Prev" />
+
+    <Button
+        android:id="@+id/btn_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/bottom_nav_menu"
+        android:layout_centerInParent="true"
+        android:text="next" />
+
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/bottom_nav_menu"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        app:menu="@menu/bottom_menu"
+        android:layout_alignParentBottom="true"
         android:background="@color/colorPrimary"
         app:itemIconTint="#ffffff"
-        android:layout_alignParentBottom="true"
-        app:itemTextColor="#ab1d13"/>
+        app:itemTextColor="#ab1d13"
+        app:menu="@menu/bottom_menu" />
 
 </RelativeLayout>

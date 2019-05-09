@@ -1,23 +1,20 @@
-package com.example.lennox.newsapp;
+package com.example.lennox.newsapp.adapters;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.lennox.newsapp.News;
+import com.example.lennox.newsapp.R;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
@@ -81,17 +78,19 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
                 if (now - dateMillis < (HR_MILLIS)) {
                     long mins = Math.round((now - dateMillis) / MIN_MILLIS);
                     if (String.valueOf(mins).equals("1")) {
-                        date = String.valueOf(mins) + " min ago";
-                    } else {
-                        date = String.valueOf(mins) + " mins ago";
+                        date = mins + " min ago";
+                    }else if(String.valueOf(mins).equals("0")){
+                        date = "Now...";
+                    }else {
+                        date = mins + " mins ago";
                     }
 
                 } else {
                     long mins = Math.round((now - dateMillis) / HR_MILLIS);
                     if (String.valueOf(mins).equals("1")) {
-                        date = String.valueOf(mins) + " hr ago";
+                        date = mins + " hr ago";
                     } else {
-                        date = String.valueOf(mins) + " hrs ago";
+                        date = mins + " hrs ago";
                     }
 
                 }

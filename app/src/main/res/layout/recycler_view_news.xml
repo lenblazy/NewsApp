@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:fontFamily="@font/lato_light"
-                    android:text="2 days ago"
+                    android:text="Now.."
                     android:layout_toStartOf="@id/spinner"
                     android:textColor="@color/listSub1"
                     android:textStyle="italic"

@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.example.lennox.newsapp.HomePageActivity;
 import com.example.lennox.newsapp.News;
-import com.example.lennox.newsapp.NewsAdapter;
+import com.example.lennox.newsapp.adapters.NewsAdapter;
 import com.example.lennox.newsapp.NewsLoader;
 import com.example.lennox.newsapp.R;
 
