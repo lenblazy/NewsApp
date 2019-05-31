@@ -14,7 +14,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".HomePageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="Habari" >
+            android:label="Habari"
+            android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,7 +25,7 @@
         <activity
             android:name=".Settings"
             android:parentActivityName=".HomePageActivity"
-            android:theme="@style/SettingsTheme">
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Settings" />

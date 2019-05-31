@@ -1,11 +1,21 @@
 package com.example.lennox.newsapp;
 
+import android.content.Intent;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatDelegate;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -13,28 +23,100 @@ import android.widget.Toast;
 import com.example.lennox.newsapp.fragments.HomeFragment;
 import com.example.lennox.newsapp.fragments.NewsFragments;
 
-public class HomePageActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class HomePageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String API_KEY = "1aefe6a9-8256-4ed1-9705-078617ffba7b";
     public static final String NEWS_URL = "https://content.guardianapis.com/search?";
     private static final String TAG = HomePageActivity.class.getSimpleName();
     private MyParceable myClass;
 
+    private BottomNavigationView bottomNavigationView;
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(MenuItem item) {
+            Fragment fragment = null;
+            Bundle bundle = new Bundle();
+            switch (item.getItemId()) {
+                case R.id.menu_world:
+                    bundle.putString("section", "world");
+                    fragment = new NewsFragments();
+                    fragment.setArguments(bundle);
+                    displayFragment(fragment);
+                    return true;
+                case R.id.menu_sports:
+                    bundle.putString("section", "sport");
+                    fragment = new NewsFragments();
+                    fragment.setArguments(bundle);
+                    displayFragment(fragment);
+                    return true;
+                case R.id.navigationHome:
+                    Log.i(TAG, "imekuja kwa home fragment");
+                    displayFragment(new HomeFragment());
+                    return true;
+                case R.id.menu_tech:
+                    bundle.putString("section", "technology");
+                    fragment = new NewsFragments();
+                    fragment.setArguments(bundle);
+                    displayFragment(fragment);
+                    return true;
+                case R.id.navigationMenu:
+                    DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                    drawer.openDrawer(GravityCompat.START);
+                    return true;
+            }
+            return false;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //check which theme user has set as preferred
+        if (new DarkModePrefManager(this).isNightMode()) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
+
         setContentView(R.layout.activity_home_page);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        BottomNavigationView nav = findViewById(R.id.bottom_nav_menu);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
 
-        findViewById(R.id.iv_nav_drawer).setOnClickListener(this);
-        findViewById(R.id.btn_next).setOnClickListener(this);
-        findViewById(R.id.btn_previous).setOnClickListener(this);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
-        nav.setOnNavigationItemSelectedListener(this);
-        displayFragment(new HomeFragment());
+        bottomNavigationView = findViewById(R.id.navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        CoordinatorLayout.LayoutParams layoutParams = (CoordinatorLayout.LayoutParams) bottomNavigationView.getLayoutParams();
+        layoutParams.setBehavior(new BottomNavigationBehavior());
+
+        bottomNavigationView.setSelectedItemId(R.id.navigationHome);
+        //displayFragment(new HomeFragment());
     }
 
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    /**
+     * @param fragment object passed from the @OnItemSelectedListener()
+     * @method replaces the current fragment with the selected one
+     */
     private void displayFragment(Fragment fragment) {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment).commit();
@@ -55,56 +137,32 @@ public class HomePageActivity extends AppCompatActivity implements BottomNavigat
     }
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        Fragment fragment = null;
-        Bundle bundle = new Bundle();
-
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
         switch (item.getItemId()) {
-            case R.id.menu_home:
-                fragment = new HomeFragment();
+            case R.id.nav_camera:
                 break;
-            case R.id.menu_world:
-                bundle.putString("section", "world");
-                fragment = new NewsFragments();
-                fragment.setArguments(bundle);
+            case R.id.setting:
+                startActivity(new Intent(this, Settings.class));
                 break;
-                /*
-            case R.id.menu_environment:
-                fragment = new NewsFragments();
-                break; */
-            case R.id.menu_sports:
-                bundle.putString("section", "sport");
-                fragment = new NewsFragments();
-                fragment.setArguments(bundle);
+            case R.id.nav_manage:
                 break;
-                /*
-            case R.id.menu_tech:
-                fragment = new NewsFragments();
-                break; */
-            default:
+            case R.id.nav_share:
                 break;
-        }
-        if (fragment != null) {
-            displayFragment(fragment);
-        }
-        return false;
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iv_nav_drawer:
-                Toast.makeText(this, "Drawer layout", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.btn_next:
-                Toast.makeText(this, "Next page", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.btn_previous:
-                Toast.makeText(this, "Previous page", Toast.LENGTH_SHORT).show();
+            case R.id.nav_dark_mode:
+                //code for setting dark mode
+                //true for dark mode, false for day mode, currently toggling on each click
+                DarkModePrefManager darkModePrefManager = new DarkModePrefManager(this);
+                darkModePrefManager.setDarkMode(!darkModePrefManager.isNightMode());
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                recreate();
                 break;
             default:
                 break;
         }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     public static class MyParceable implements Parcelable {

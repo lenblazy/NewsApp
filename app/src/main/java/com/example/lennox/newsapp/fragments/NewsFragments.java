@@ -18,6 +18,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.lennox.newsapp.HomePageActivity;
@@ -31,13 +34,15 @@ import java.util.List;
 
 import static com.example.lennox.newsapp.HomePageActivity.API_KEY;
 
-public class NewsFragments extends Fragment implements LoaderManager.LoaderCallbacks<List<News>> {
+public class NewsFragments extends Fragment implements LoaderManager.LoaderCallbacks<List<News>>, View.OnClickListener {
 
     private RecyclerView recyclerNews;
     private List<News> sectionNewsList;
     private NewsAdapter newsAdapter;
     private static String TAG = NewsFragments.class.getSimpleName();
     private static String section;
+    private RelativeLayout btnContainer;
+    private Button btnNextPage, btnPrevPage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,6 +60,25 @@ public class NewsFragments extends Fragment implements LoaderManager.LoaderCallb
 
         recyclerNews = view.findViewById(R.id.rv_news);
         recyclerNews.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        btnContainer = view.findViewById(R.id.btn_container);
+        view.findViewById(R.id.btn_next).setOnClickListener(this);
+        view.findViewById(R.id.btn_previous).setOnClickListener(this);
+
+        recyclerNews.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (!recyclerView.canScrollVertically(1)) {
+                    btnContainer.setVisibility(View.VISIBLE);
+                } else if (recyclerView.canScrollVertically(1)) {
+                    btnContainer.setVisibility(View.GONE);
+                }else{
+                    btnContainer.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
         ConnectivityManager conMgr = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = conMgr.getActiveNetworkInfo();
@@ -118,6 +142,20 @@ public class NewsFragments extends Fragment implements LoaderManager.LoaderCallb
     public void onLoaderReset(Loader<List<News>> loader) {
         sectionNewsList.clear();
         newsAdapter.notifyDataSetChanged(); // let your adapter know about the changes and reload view.
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_next:
+                Toast.makeText(getActivity(), "NEXT PAGE PLEASE", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.btn_previous:
+                Toast.makeText(getActivity(), "PREVIOUS PAGE PLEASE", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+        }
     }
 
      /*

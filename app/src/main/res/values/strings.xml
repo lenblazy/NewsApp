@@ -8,6 +8,11 @@
     <string name="date">Date</string>
     <!-- to add more -->
 
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="text_hint"><b>Search...</b></string>
+
     <!-- different sections -->
     <string name="settings_sections_key" translatable="false">section</string>
     <string name="settings_sections_default" translatable="false">All</string>
