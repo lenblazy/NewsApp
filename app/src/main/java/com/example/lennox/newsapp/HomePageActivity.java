@@ -8,7 +8,10 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -53,7 +56,6 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     displayFragment(fragment);
                     return true;
                 case R.id.navigationHome:
-                    Log.i(TAG, "imekuja kwa home fragment");
                     displayFragment(new HomeFragment());
                     return true;
                 case R.id.menu_tech:
@@ -66,6 +68,7 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
                     DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                     drawer.openDrawer(GravityCompat.START);
                     return true;
+
             }
             return false;
         }
@@ -100,7 +103,10 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         layoutParams.setBehavior(new BottomNavigationBehavior());
 
         bottomNavigationView.setSelectedItemId(R.id.navigationHome);
-        //displayFragment(new HomeFragment());
+
+//        SectionsPagerAdapter vpAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+//        ViewPager vp = findViewById(R.id.vp_shift_sections);
+//        vp.setAdapter(vpAdapter);
     }
 
     @Override
@@ -195,6 +201,48 @@ public class HomePageActivity extends AppCompatActivity implements NavigationVie
         // recreate object from parcel
         private MyParceable(Parcel in) {
             mData = in.readInt();
+        }
+    }
+
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            Fragment fragment = null;
+            Bundle bundle = new Bundle();
+
+            switch (i){
+                case 1:
+                    bundle.putString("section", "world");
+                    fragment = new NewsFragments();
+                    fragment.setArguments(bundle);
+                    displayFragment(fragment);
+                    break;
+                case 2:
+                    bundle.putString("section", "sport");
+                    fragment = new NewsFragments();
+                    fragment.setArguments(bundle);
+                    displayFragment(fragment);
+                    break;
+                case 3:
+                    displayFragment(new HomeFragment());
+                    break;
+                case 4:
+                    bundle.putString("section", "technology");
+                    fragment = new NewsFragments();
+                    fragment.setArguments(bundle);
+                    break;
+            }
+            return null;
+        }
+
+
+        @Override
+        public int getCount() {
+            return 0;
         }
     }
 

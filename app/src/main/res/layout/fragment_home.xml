@@ -82,8 +82,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
                     android:layout_marginTop="6dp"
-                    android:layout_marginLeft="160dp"
-                    android:layout_marginRight="160dp"
+                    android:layout_marginLeft="150dp"
+                    android:layout_marginRight="150dp"
                     android:background="#ab1d13" />
 
                 <TextView
@@ -94,6 +94,7 @@
                     android:gravity="center"
                     android:fontFamily="@font/lato_light"
                     android:text="Stories to read"
+                    android:textColor="@color/colorText"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -103,7 +104,6 @@
                 android:layout_height="wrap_content"
                 android:layout_above="@id/btn_container"
                 android:layout_below="@+id/viewer"
-                android:background="#f2f2f2"
                 android:divider="#00000000"
                 android:scrollbars="none" />
 

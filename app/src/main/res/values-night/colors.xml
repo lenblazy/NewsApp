@@ -5,4 +5,7 @@
     <color name="contentTextColor">#fff</color>
     <color name="bottomNavigationBackground">#2A2E43</color>
 
+    <color name="colorText">#fff</color>
+    <color name="recycler_background">#2A2E43</color>
+
 </resources>

@@ -12,21 +12,74 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:visibility="gone"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
+            android:visibility="gone"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
 
+    <!--<android.support.v4.view.ViewPager-->
+        <!--android:id="@+id/vp_shift_sections"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
     <android.support.design.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:id="@+id/fragment_container"
         style="@style/parent.contentLayout"
-         />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <RelativeLayout
+        android:id="@+id/btn_container"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/rv_news"
+        android:background="#f2f2f2"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@+id/fragment_container"
+        android:visibility="gone"
+        app:layout_anchorGravity="bottom|center">
+
+        <ImageView
+            android:id="@+id/btn_previous"
+            android:layout_width="40sp"
+            android:layout_height="40sp"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/previous_page"
+            android:layout_marginStart="6dp"
+            android:layout_marginBottom="6dp"
+            android:text="Prev" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_light"
+            android:layout_marginStart="6dp"
+            android:layout_toEndOf="@id/btn_previous"
+            android:text="Previous page"/>
+
+        <ImageView
+            android:id="@+id/btn_next"
+            android:layout_width="40sp"
+            android:layout_height="40sp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/next_page"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="6dp"
+            android:text="next" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_light"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="6dp"
+            android:layout_toStartOf="@id/btn_next"
+            android:text="Next page"/>
+    </RelativeLayout>
 
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/navigation"
