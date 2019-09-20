@@ -7,13 +7,13 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -22,9 +22,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.support.v4.content.Loader;
+import androidx.loader.content.Loader;
 
-import com.example.lennox.newsapp.HomePageActivity;
+import com.example.lennox.newsapp.activities.HomePageActivity;
 import com.example.lennox.newsapp.News;
 import com.example.lennox.newsapp.adapters.NewsAdapter;
 import com.example.lennox.newsapp.NewsLoader;
@@ -33,7 +33,7 @@ import com.example.lennox.newsapp.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.lennox.newsapp.HomePageActivity.API_KEY;
+import static com.example.lennox.newsapp.activities.HomePageActivity.API_KEY;
 
 public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<News>>, View.OnTouchListener {
 
@@ -164,7 +164,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     //reset the adapter and add new data
     private void refresh(String queryText) {
-        Toast.makeText(getActivity(), queryText, Toast.LENGTH_SHORT).show();
         homeNewsList.clear();
 
         //emptyState.setVisibility(View.GONE);

@@ -2,15 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="6dp"
     android:background="@color/recycler_background"
     android:elevation="8dp"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#fff"
+        app:cardBackgroundColor="#fff"
         android:orientation="vertical">
 
         <LinearLayout
@@ -62,8 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:drawSelectorOnTop="false"
-                    android:background="@drawable/more"
+                    android:background="@drawable/spinner_background"
                     />
 
             </RelativeLayout>
@@ -138,6 +139,6 @@
 
             </LinearLayout>
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

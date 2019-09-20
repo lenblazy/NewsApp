@@ -7,23 +7,22 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.example.lennox.newsapp.HomePageActivity;
+import com.example.lennox.newsapp.activities.HomePageActivity;
 import com.example.lennox.newsapp.News;
 import com.example.lennox.newsapp.adapters.NewsAdapter;
 import com.example.lennox.newsapp.NewsLoader;
@@ -32,7 +31,7 @@ import com.example.lennox.newsapp.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.lennox.newsapp.HomePageActivity.API_KEY;
+import static com.example.lennox.newsapp.activities.HomePageActivity.API_KEY;
 
 public class NewsFragments extends Fragment implements LoaderManager.LoaderCallbacks<List<News>>, View.OnClickListener {
 

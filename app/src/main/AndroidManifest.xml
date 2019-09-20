@@ -12,10 +12,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".HomePageActivity"
+        <activity android:name=".activities.WebActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".activities.HomePageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Habari"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,12 +26,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Settings"
-            android:parentActivityName=".HomePageActivity"
-            >
+            android:name=".activities.Settings"
+            android:parentActivityName=".activities.HomePageActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Settings" />
+                android:value=".activities.Settings" />
         </activity>
     </application>
 

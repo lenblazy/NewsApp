@@ -3,11 +3,14 @@ package com.example.lennox.newsapp.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
@@ -15,11 +18,13 @@ import android.widget.TextView;
 
 import com.example.lennox.newsapp.News;
 import com.example.lennox.newsapp.R;
+import com.example.lennox.newsapp.activities.WebActivity;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -44,7 +49,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
 
     @Override
     public void onBindViewHolder(@NonNull final NewsViewsHolder holder, int position) {
-        News news = newsList.get(holder.getAdapterPosition());
+        final News news = newsList.get(holder.getAdapterPosition());
         itemPosition = holder.getAdapterPosition();
 
         long MIN_MILLIS = 1000 * 60;
@@ -79,9 +84,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
                     long mins = Math.round((now - dateMillis) / MIN_MILLIS);
                     if (String.valueOf(mins).equals("1")) {
                         date = mins + " min ago";
-                    }else if(String.valueOf(mins).equals("0")){
+                    } else if (String.valueOf(mins).equals("0")) {
                         date = "Now...";
-                    }else {
+                    } else {
                         date = mins + " mins ago";
                     }
 
@@ -99,14 +104,61 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
                 date = sDateFormat.format(dateDate);
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.out.println("Error occurred");
         }
 
         //add a dot to the date string
         date = "\u2022" + date;
 
         holder.tvTime.setText(date);
-        //todo: use spinner to allow users to follow or view author's profile
+
+        final List<String> authorChoices = new ArrayList<>();
+        authorChoices.add("Profile ");
+        authorChoices.add("Twitter");
+
+        HintAdapter hintAdapter = new HintAdapter(mContext, R.layout.spinner_item);
+        hintAdapter.addAll(authorChoices);
+        hintAdapter.add("");
+        holder.spinner.setAdapter(hintAdapter);
+        holder.spinner.setSelection(hintAdapter.getCount());
+        holder.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (i) {
+                    case 0:
+                        if (news.getContributorProfile() != null) {
+                            HintAdapter hintAdapter = new HintAdapter(mContext, R.layout.spinner_item);
+                            hintAdapter.addAll(authorChoices);
+                            hintAdapter.add("");
+                            holder.spinner.setAdapter(hintAdapter);
+                            holder.spinner.setSelection(hintAdapter.getCount());
+
+                            Intent profIntent = new Intent(mContext, WebActivity.class);
+                            profIntent.putExtra("url",news.getContributorProfile());
+                            mContext.startActivity(profIntent);
+                        }
+                        break;
+                    case 1:
+                        if (news.getTwitterHandle() != null) {
+                            HintAdapter hintAdapter = new HintAdapter(mContext, R.layout.spinner_item);
+                            hintAdapter.addAll(authorChoices);
+                            hintAdapter.add("");
+                            holder.spinner.setAdapter(hintAdapter);
+                            holder.spinner.setSelection(hintAdapter.getCount());
+
+                            startTwitter(mContext, news.getTwitterHandle());
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         holder.tvNewsBody.setText(news.getBodyText());
 
@@ -118,8 +170,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
             @Override
             public void onClick(View view) {
                 News currentNews = newsList.get(holder.getAdapterPosition());
-                Uri newsUri = Uri.parse(currentNews.getNewsURL());
-                view.getContext().startActivity(new Intent(Intent.ACTION_VIEW, newsUri));
+//                Uri newsUri = Uri.parse(currentNews.getNewsURL());
+//                view.getContext().startActivity(new Intent(Intent.ACTION_VIEW, newsUri));
+                Intent i = new Intent(mContext, WebActivity.class);
+                i.putExtra("url",currentNews.getNewsURL());
+                mContext.startActivity(i);
             }
         });
     }
@@ -152,4 +207,18 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewsHolde
             ivNewsImage = itemView.findViewById(R.id.iv_news_image);
         }
     }//end inner class
+
+    public static void startTwitter(Context context, String twitter) {
+
+        Intent intent;
+        try {
+            // get the Twitter app if possible
+            context.getPackageManager().getPackageInfo("com.twitter.android", 0);
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("twitter://user?" + twitter));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        } catch (Exception e) {
+            intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/" + twitter));
+        }
+        context.startActivity(intent);
+    }
 }//end class NewsAdapter

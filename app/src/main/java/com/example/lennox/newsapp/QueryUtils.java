@@ -67,8 +67,8 @@ public class QueryUtils {
 
                 String newsImage = fields.getString("thumbnail");
                 String bodyText = fields.getString("bodyText");
-                //todo: get the star ratings
-                String starRating = "3";
+
+                String starRating = "0";
                 if(fields.has("starRating")){
                     starRating = fields.getString("starRating");
                 }
